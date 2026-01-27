@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Retention Journal</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <meta name="description" content="A simple journalist-style retention journal: streaks, milestones, and daily notes." />
+</head>
+<body>
+  <header class="header">
+    <div class="header__inner">
+      <div class="brand">
+        <img src="./assets/hero.svg" class="brand__logo" alt="Retention Journal logo" />
+        <div>
+          <h1>Retention Journal</h1>
+          <p class="muted">Daily logs • streak • milestones • reflections</p>
+        </div>
+      </div>
+
+      <div class="header__actions">
+        <button class="btn btn--ghost" id="btnExport">Export</button>
+        <button class="btn btn--ghost" id="btnImport">Import</button>
+        <input type="file" id="fileImport" accept="application/json" hidden />
+        <button class="btn btn--danger" id="btnReset">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="grid">
+      <!-- LEFT: Progress card -->
+      <div class="card">
+        <div class="card__head">
+          <h2>Progress</h2>
+          <span class="pill" id="stageLabel">Stage</span>
+        </div>
+
+        <div class="progressHero">
+          <img id="stageImage" src="./assets/stage-1.svg" alt="Progress stage" />
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat__label">Current streak</div>
+            <div class="stat__value" id="streakDays">0</div>
+            <div class="stat__hint muted">days</div>
+          </div>
+          <div class="stat">
+            <div class="stat__label">Best streak</div>
+            <div class="stat__value" id="bestDays">0</div>
+            <div class="stat__hint muted">days</div>
+          </div>
+          <div class="stat">
+            <div class="stat__label">Total entries</div>
+            <div class="stat__value" id="totalEntries">0</div>
+            <div class="stat__hint muted">logged</div>
+          </div>
+        </div>
+
+        <div class="milestones">
+          <h3>Milestones</h3>
+          <div class="milestones__list" id="milestonesList"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: New entry + feed -->
+      <div class="card">
+        <div class="card__head">
+          <h2>Daily Journal</h2>
+          <span class="muted">Write like a reporter: facts, context, reflection.</span>
+        </div>
+
+        <form id="entryForm" class="form">
+          <div class="row">
+            <label>
+              <span>Date</span>
+              <input type="date" id="date" required />
+            </label>
+
+            <label>
+              <span>Day type</span>
+              <select id="dayType">
+                <option value="clean">Clean day</option>
+                <option value="urge">Urges managed</option>
+                <option value="slip">Slip / relapse</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="row">
+            <label>
+              <span>Energy</span>
+              <input type="range" id="energy" min="1" max="10" value="6" />
+              <small class="muted">1 low • 10 high</small>
+            </label>
+
+            <label>
+              <span>Mood</span>
+              <input type="range" id="mood" min="1" max="10" value="6" />
+              <small class="muted">1 heavy • 10 great</small>
+            </label>
+          </div>
+
+          <label>
+            <span>Headline</span>
+            <input type="text" id="headline" maxlength="80" placeholder="e.g., 'Handled a tough trigger and stayed calm'" />
+          </label>
+
+          <label>
+            <span>What happened? (facts)</span>
+            <textarea id="facts" rows="3" placeholder="Context, triggers, environment, events..."></textarea>
+          </label>
+
+          <label>
+            <span>Why do you think it happened? (analysis)</span>
+            <textarea id="analysis" rows="3" placeholder="Patterns, sleep, stress, social media, habits..."></textarea>
+          </label>
+
+          <label>
+            <span>What will you do next? (action)</span>
+            <textarea id="action" rows="2" placeholder="Plan for tomorrow, boundaries, workouts, substitutions..."></textarea>
+          </label>
+
+          <div class="form__actions">
+            <button class="btn" type="submit">Save entry</button>
+            <button class="btn btn--ghost" type="button" id="btnQuickNote">Quick note</button>
+          </div>
+        </form>
+
+        <hr class="sep" />
+
+        <div class="feedHead">
+          <h3>Recent entries</h3>
+          <div class="feedTools">
+            <input id="search" class="input" placeholder="Search headline or notes..." />
+            <select id="filterType" class="input">
+              <option value="all">All</option>
+              <option value="clean">Clean</option>
+              <option value="urge">Urges managed</option>
+              <option value="slip">Slip</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="feed" class="feed"></div>
+      </div>
+    </section>
+
+    <footer class="footer muted">
+      <p>
+        Data is stored locally in your browser (LocalStorage). Replace the SVGs in <code>/assets</code> with your own images anytime.
+      </p>
+    </footer>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
