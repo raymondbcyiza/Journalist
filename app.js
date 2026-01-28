@@ -109,7 +109,7 @@ function render() {
 
   const stageInfo = stageByStreak(current);
   document.getElementById("stageLabel").textContent = `Stage: ${stageInfo.name}`;
-  document.getElementById("stageImage").src = `./assets/stage-${stageInfo.stage}.svg`;
+  document.getElementById("stageImage").src = `./assets/stage-${stageInfo.stage}.jpg`;
 
   // milestones
   const mWrap = document.getElementById("milestonesList");
