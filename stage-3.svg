@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#1a1d2e"/>
+  
+  <!-- Strong character -->
+  <ellipse cx="200" cy="180" rx="85" ry="95" fill="#e6b887"/>
+  
+  <!-- Confident eyes -->
+  <circle cx="175" cy="165" r="10" fill="white"/>
+  <circle cx="225" cy="165" r="10" fill="white"/>
+  <circle cx="177" cy="167" r="5" fill="black"/>
+  <circle cx="227" cy="167" r="5" fill="black"/>
+  
+  <!-- Confident smile -->
+  <path d="M 170 205 Q 200 215 230 205" stroke="black" stroke-width="3" fill="none"/>
+  
+  <!-- Bicep flex -->
+  <ellipse cx="140" cy="180" rx="20" ry="30" fill="#e6b887" transform="rotate(-30 140 180)"/>
+  <circle cx="135" cy="165" r="15" fill="#f5d4a0"/>
+  
+  <text x="200" y="40" font-family="Arial" font-size="24" font-weight="bold" fill="#9aa3b2" text-anchor="middle">
+    DAY 30-59
+  </text>
+  <text x="200" y="270" font-family="Arial" font-size="18" fill="#00ff88" text-anchor="middle">
+    "Steady Progress"
+  </text>
+  
+  <rect x="100" y="250" width="200" height="8" rx="4" fill="#2a2d3e"/>
+  <rect x="100" y="250" width="140" height="8" rx="4" fill="#00ff88"/>
+</svg>
