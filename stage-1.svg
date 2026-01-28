@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#1a1d2e"/>
+  
+  <!-- Weak/tired character -->
+  <ellipse cx="200" cy="180" rx="80" ry="90" fill="#8b7355"/>
+  
+  <!-- Tired eyes -->
+  <line x1="170" y1="160" x2="180" y2="165" stroke="black" stroke-width="4"/>
+  <line x1="220" y1="160" x2="230" y2="165" stroke="black" stroke-width="4"/>
+  
+  <!-- Sad mouth -->
+  <path d="M 170 200 Q 200 195 230 200" stroke="black" stroke-width="3" fill="none"/>
+  
+  <!-- Text overlay -->
+  <text x="200" y="40" font-family="Arial" font-size="24" font-weight="bold" fill="#9aa3b2" text-anchor="middle">
+    DAY 0-13
+  </text>
+  <text x="200" y="270" font-family="Arial" font-size="18" fill="#7c5cff" text-anchor="middle">
+    "Still Figuring It Out"
+  </text>
+  
+  <!-- Small progress bar -->
+  <rect x="100" y="250" width="200" height="8" rx="4" fill="#2a2d3e"/>
+  <rect x="100" y="250" width="40" height="8" rx="4" fill="#7c5cff"/>
+</svg>
