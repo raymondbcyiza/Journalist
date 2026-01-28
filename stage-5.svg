@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff00ff;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <rect width="400" height="300" fill="#0a0a0a"/>
+  
+  <!-- Glow effect -->
+  <circle cx="200" cy="180" r="120" fill="url(#glow)" opacity="0.3"/>
+  
+  <!-- Enlightened character -->
+  <ellipse cx="200" cy="180" rx="95" ry="105" fill="#ffeb99"/>
+  
+  <!-- Glowing eyes -->
+  <circle cx="175" cy="165" r="14" fill="#00ffff"/>
+  <circle cx="225" cy="165" r="14" fill="#00ffff"/>
+  <circle cx="175" cy="165" r="20" fill="#00ffff" opacity="0.3"/>
+  <circle cx="225" cy="165" r="20" fill="#00ffff" opacity="0.3"/>
+  
+  <!-- Enlightened smile -->
+  <path d="M 165 210 Q 200 225 235 210" stroke="black" stroke-width="3" fill="none"/>
+  
+  <!-- Halo -->
+  <ellipse cx="200" cy="90" rx="70" ry="15" fill="none" stroke="#ffd700" stroke-width="5" opacity="0.8"/>
+  
+  <!-- Crown -->
+  <polygon points="170,100 180,115 190,100 200,115 210,100 220,115 230,100 225,85 175,85" fill="#ffd700"/>
+  
+  <!-- Sparkles everywhere -->
+  <text x="100" y="100" font-size="24" fill="#00ffff">✨</text>
+  <text x="280" y="100" font-size="24" fill="#ff00ff">✨</text>
+  <text x="120" y="240" font-size="20" fill="#ffd700">⭐</text>
+  <text x="270" y="240" font-size="20" fill="#ffd700">⭐</text>
+  
+  <text x="200" y="40" font-family="Arial" font-size="26" font-weight="bold" fill="#ffd700" text-anchor="middle">
+    DAY 90+
+  </text>
+  <text x="200" y="270" font-family="Arial" font-size="20" fill="#00ffff" text-anchor="middle">
+    "⚡ LEGEND STATUS ⚡"
+  </text>
+  
+  <rect x="100" y="250" width="200" height="10" rx="5" fill="#2a2d3e"/>
+  <rect x="100" y="250" width="200" height="10" rx="5" fill="#ffd700"/>
+</svg>
