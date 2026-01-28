@@ -20,8 +20,10 @@ const stageByStreak = (days) => {
 
 function todayISO() {
   const d = new Date();
-  d.setHours(0,0,0,0);
-  return d.toISOString().slice(0,10);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 function loadState() {
@@ -42,6 +44,12 @@ function saveState(state) {
 
 function sortEntriesDesc(entries) {
   return [...entries].sort((a,b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+}
+function toLocalYMD(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 function computeStreak(entries) {
@@ -81,7 +89,7 @@ function computeStreak(entries) {
   let current = 0;
   let cursor = new Date(todayISO() + "T00:00:00");
   while (true) {
-    const key = cursor.toISOString().slice(0,10);
+    const key = toLocalYMD(cursor);
     const e = map.get(key);
     if (!e) break;
     if (e.dayType === "slip") break;
@@ -326,3 +334,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
+
