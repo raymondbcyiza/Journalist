@@ -189,5 +189,117 @@ input[type="range"]{width:100%}
   border:none; background:none; color: rgba(233,237,245,.9);
   cursor:pointer; padding:0; text-decoration:underline;
 }
+/* ========================================
+   MOBILE OPTIMIZATIONS
+   ======================================== */
+
+/* Prevent horizontal overflow */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Small tablets and large phones */
+@media (max-width: 768px) {
+  :root {
+    --radius: 14px;
+  }
+  
+  body {
+    background: 
+      radial-gradient(circle at 20% 0%, rgba(124,92,255,.15), transparent 40%),
+      radial-gradient(circle at 80% 20%, rgba(0,200,255,.10), transparent 40%),
+      var(--bg);
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 640px) {
+  .container {
+    padding: 16px 12px 32px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .header__inner {
+    padding: 14px 12px;
+    flex-wrap: wrap;
+  }
+
+  .brand__logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  h1 {
+    font-size: 16px;
+  }
+
+  .header__actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .feedHead {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .feedTools {
+    flex-direction: column;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 375px) {
+  .container {
+    padding: 12px 10px 28px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  h2 {
+    font-size: 15px;
+  }
+
+  .btn {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+}
+
+/* Landscape orientation fix */
+@media (max-width: 980px) and (orientation: landscape) {
+  .progressHero {
+    max-height: 200px;
+  }
+  
+  .progressHero img {
+    object-fit: cover;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .btn, .linkBtn {
+    min-height: 44px; /* iOS recommended touch target */
+    min-width: 44px;
+  }
+  
+  input, select, textarea {
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+}
+```__
 
 .footer{margin-top:18px; font-size:12px}
+
