@@ -1,22 +1,49 @@
 const STORAGE_KEY = "sr_journal_v1";
 
+const STORAGE_KEY = "sr_journal_v1";
+
+// ✅ Milestones up to 1 year
 const milestones = [
-  { days: 3,  label: "3 days — momentum" },
-  { days: 7,  label: "7 days — first week" },
-  { days: 14, label: "14 days — two weeks" },
-  { days: 30, label: "30 days — one month" },
-  { days: 60, label: "60 days — strong base" },
-  { days: 90, label: "90 days — major milestone" },
+  { days: 3,   label: "3 days — momentum" },
+  { days: 7,   label: "7 days — first week" },
+  { days: 14,  label: "14 days — two weeks" },
+  { days: 30,  label: "30 days — one month" },
+  { days: 60,  label: "60 days — strong base" },
+
+  // new arc
+  { days: 90,  label: "90 days — major milestone" },
+  { days: 120, label: "120 days — habits locked in" },
+  { days: 150, label: "150 days — no more excuses" },
+  { days: 180, label: "180 days — mind & body aligned" },
+  { days: 210, label: "210 days — consistency wins" },
+  { days: 240, label: "240 days — identity shift" },
+  { days: 270, label: "270 days — lead by example" },
+  { days: 300, label: "300 days — built different" },
+  { days: 330, label: "330 days — unstoppable" },
+  { days: 365, label: "365 days — legend status" },
 ];
 
+// and stage-90.jpg, stage-120.jpg, ... stage-365.jpg (later)
 const stageByStreak = (days) => {
-  // pick an image stage based on streak
-  if (days >= 90) return { stage: 5, name: "Legend (90+)" };
+  // one-year arc (most specific first)
+  if (days >= 365) return { stage: 365, name: "Legend (365)" };
+  if (days >= 330) return { stage: 330, name: "Unstoppable (330+)" };
+  if (days >= 300) return { stage: 300, name: "Built Different (300+)" };
+  if (days >= 270) return { stage: 270, name: "Leader (270+)" };
+  if (days >= 240) return { stage: 240, name: "Identity Shift (240+)" };
+  if (days >= 210) return { stage: 210, name: "Consistency Wins (210+)" };
+  if (days >= 180) return { stage: 180, name: "Aligned (180+)" };
+  if (days >= 150) return { stage: 150, name: "Warrior (150+)" };
+  if (days >= 120) return { stage: 120, name: "Discipline (120+)" };
+  if (days >= 90)  return { stage: 90,  name: "Major Milestone (90+)" };
+
+  // early stages (your existing 1–5 files)
   if (days >= 60) return { stage: 4, name: "Focused (60+)" };
   if (days >= 30) return { stage: 3, name: "Steady (30+)" };
   if (days >= 14) return { stage: 2, name: "Building (14+)" };
   return { stage: 1, name: "Starting (0+)" };
 };
+
 
 function todayISO() {
   const d = new Date();
@@ -117,7 +144,15 @@ function render() {
 
   const stageInfo = stageByStreak(current);
   document.getElementById("stageLabel").textContent = `Stage: ${stageInfo.name}`;
-  document.getElementById("stageImage").src = `./assets/stage-${stageInfo.stage}.jpg`;
+  const img = document.getElementById("stageImage");
+  img.src = `./assets/stage-${stageInfo.stage}.jpg`;
+
+  // fallback if you haven’t added the later images yet
+  img.onerror = () => {
+    img.onerror = null; // prevent loops
+    img.src = "./assets/stage-placeholder.jpg"; // add one placeholder image
+  };
+
 
   // milestones
   const mWrap = document.getElementById("milestonesList");
@@ -334,4 +369,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
+
 
