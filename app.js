@@ -1,3 +1,6 @@
+window.addEventListener("error", (e) => {
+  console.error("Global error:", e.message);
+});
 const STORAGE_KEY = "sr_journal_v1";
 
 const milestones = [
@@ -366,6 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
+
 
 
 
