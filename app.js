@@ -1,8 +1,5 @@
 const STORAGE_KEY = "sr_journal_v1";
 
-const STORAGE_KEY = "sr_journal_v1";
-
-// ✅ Milestones up to 1 year
 const milestones = [
   { days: 3,   label: "3 days — momentum" },
   { days: 7,   label: "7 days — first week" },
@@ -369,5 +366,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
+
 
 
