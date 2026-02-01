@@ -270,11 +270,52 @@ function upsertEntry(newEntry) {
 function uuid() {
   return (crypto?.randomUUID?.() || ("id-" + Math.random().toString(16).slice(2)));
 }
+function isEditing() {
+  const form = document.getElementById("entryForm");
+  return !!form?.dataset?.editingId;
+}
+
+function syncDateInputToToday() {
+  const dateEl = document.getElementById("date");
+  if (!dateEl) return;
+
+  // Don't override when editing an existing entry
+  if (isEditing()) return;
+
+  const today = todayISO();
+  if (dateEl.value !== today) dateEl.value = today;
+}
+
+// Schedules a one-shot timer to run shortly after the next local midnight
+function scheduleMidnightSync() {
+  const now = new Date();
+  const next = new Date(now);
+  next.setHours(24, 0, 2, 0); // 2 seconds after midnight to be safe
+  const ms = next - now;
+
+  setTimeout(() => {
+    syncDateInputToToday();
+    scheduleMidnightSync(); // reschedule for the following midnight
+  }, ms);
+}
 
 // init
 document.addEventListener("DOMContentLoaded", () => {
   // default date = today
-  document.getElementById("date").value = todayISO();
+  syncDateInputToToday();
+
+// Update when the user comes back to the tab
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) syncDateInputToToday();
+});
+
+// Update when the date input gets focus/clicked
+document.getElementById("date").addEventListener("focus", syncDateInputToToday);
+document.getElementById("date").addEventListener("click", syncDateInputToToday);
+
+// Update after midnight automatically
+scheduleMidnightSync();
+
 
   document.getElementById("entryForm").addEventListener("submit", (ev) => {
     ev.preventDefault();
@@ -309,7 +350,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnQuickNote").addEventListener("click", () => {
     const headline = prompt("Quick note headline:");
     if (!headline) return;
-    const date = document.getElementById("date").value || todayISO();
+    const dateEl = document.getElementById("date");
+    const date = (isEditing() ? dateEl.value : todayISO());
     upsertEntry({
       id: uuid(),
       date,
@@ -369,6 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
+
 
 
 
