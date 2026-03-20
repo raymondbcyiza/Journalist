@@ -1,17 +1,17 @@
 window.addEventListener("error", (e) => {
   console.error("Global error:", e.message);
 });
+
 const STORAGE_KEY = "sr_journal_v1";
 
 const milestones = [
-  { days: 3,   label: "3 days — momentum" },
-  { days: 7,   label: "7 days — first week" },
-  { days: 14,  label: "14 days — two weeks" },
-  { days: 30,  label: "30 days — one month" },
-  { days: 60,  label: "60 days — strong base" },
+  { days: 3, label: "3 days — momentum" },
+  { days: 7, label: "7 days — first week" },
+  { days: 14, label: "14 days — two weeks" },
+  { days: 30, label: "30 days — one month" },
+  { days: 60, label: "60 days — strong base" },
 
-  // new arc
-  { days: 90,  label: "90 days — major milestone" },
+  { days: 90, label: "90 days — major milestone" },
   { days: 120, label: "120 days — habits locked in" },
   { days: 150, label: "150 days — no more excuses" },
   { days: 180, label: "180 days — mind & body aligned" },
@@ -23,9 +23,7 @@ const milestones = [
   { days: 365, label: "365 days — legend status" },
 ];
 
-// and stage-90.jpg, stage-120.jpg, ... stage-365.jpg (later)
 const stageByStreak = (days) => {
-  // one-year arc (most specific first)
   if (days >= 365) return { stage: 365, name: "Legend (365)" };
   if (days >= 330) return { stage: 330, name: "Unstoppable (330+)" };
   if (days >= 300) return { stage: 300, name: "Built Different (300+)" };
@@ -35,18 +33,23 @@ const stageByStreak = (days) => {
   if (days >= 180) return { stage: 180, name: "Aligned (180+)" };
   if (days >= 150) return { stage: 150, name: "Warrior (150+)" };
   if (days >= 120) return { stage: 120, name: "Discipline (120+)" };
-  if (days >= 90)  return { stage: 90,  name: "Major Milestone (90+)" };
+  if (days >= 90) return { stage: 90, name: "Major Milestone (90+)" };
 
-  // early stages (your existing 1–5 files)
   if (days >= 60) return { stage: 4, name: "Focused (60+)" };
   if (days >= 30) return { stage: 3, name: "Steady (30+)" };
   if (days >= 14) return { stage: 2, name: "Building (14+)" };
   return { stage: 1, name: "Starting (0+)" };
 };
 
-
 function todayISO() {
   const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function toLocalYMD(d) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
@@ -70,66 +73,89 @@ function saveState(state) {
 }
 
 function sortEntriesDesc(entries) {
-  return [...entries].sort((a,b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  return [...entries].sort((a, b) =>
+    a.date < b.date ? 1 : a.date > b.date ? -1 : 0
+  );
 }
-function toLocalYMD(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+
+function diffDaysInclusive(fromISO, toISO) {
+  const from = new Date(fromISO + "T00:00:00");
+  const to = new Date(toISO + "T00:00:00");
+  return Math.floor((to - from) / (1000 * 60 * 60 * 24)) + 1;
 }
 
 function computeStreak(entries) {
-  // Streak counts consecutive days where last entry is not "slip"
-  // If a day is missing, streak breaks (simple, predictable behavior).
-  const map = new Map(entries.map(e => [e.date, e]));
-  const dates = [...map.keys()].sort(); // asc
-  if (dates.length === 0) return { current: 0, best: 0 };
+  if (!entries.length) return { current: 0, best: 0 };
 
-  // compute best streak from the whole history
-  let best = 0;
-  let run = 0;
-  let prev = null;
+  const sorted = [...entries].sort((a, b) => {
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    return (a.updatedAt || 0) - (b.updatedAt || 0);
+  });
 
-  for (const dt of dates) {
-    const e = map.get(dt);
-    const cur = new Date(dt + "T00:00:00");
-    if (e.dayType === "slip") {
-      run = 0;
-      prev = cur;
-      best = Math.max(best, run);
-      continue;
-    }
+  const today = todayISO();
 
-    if (!prev) {
-      run = 1;
-    } else {
-      const diffDays = Math.round((cur - prev) / (1000*60*60*24));
-      if (diffDays === 1 && map.get(dt)?.dayType !== "slip") run += 1;
-      else run = 1;
-    }
-    prev = cur;
-    best = Math.max(best, run);
+  // Latest entry for a given day wins
+  const dayMap = new Map();
+  for (const e of sorted) {
+    dayMap.set(e.date, e);
   }
 
-  // current streak: walk backward from today until missing/slip
+  const dates = [...dayMap.keys()].sort();
+
+  // CURRENT STREAK:
+  // Time-based. Count calendar days since the most recent slip.
+  // If today is slip => 0.
+  // If there has never been a slip => count from first recorded day to today.
+  let lastSlipDate = null;
+  for (const dt of dates) {
+    const e = dayMap.get(dt);
+    if (e.dayType === "slip") lastSlipDate = dt;
+  }
+
   let current = 0;
-  let cursor = new Date(todayISO() + "T00:00:00");
-  while (true) {
-    const key = toLocalYMD(cursor);
-    const e = map.get(key);
-    if (!e) break;
-    if (e.dayType === "slip") break;
-    current += 1;
-    cursor.setDate(cursor.getDate() - 1);
+  const todayEntry = dayMap.get(today);
+
+  if (todayEntry?.dayType === "slip") {
+    current = 0;
+  } else if (lastSlipDate) {
+    current = Math.max(0, diffDaysInclusive(lastSlipDate, today) - 1);
+  } else {
+    current = diffDaysInclusive(dates[0], today);
+  }
+
+  // BEST STREAK:
+  // Longest calendar segment between slips, extended to today if current segment is open.
+  let best = 0;
+  let segmentStart = null;
+
+  for (const dt of dates) {
+    const e = dayMap.get(dt);
+
+    if (e.dayType === "slip") {
+      if (segmentStart) {
+        const days = diffDaysInclusive(segmentStart, dt) - 1;
+        best = Math.max(best, days);
+        segmentStart = null;
+      }
+    } else if (!segmentStart) {
+      segmentStart = dt;
+    }
+  }
+
+  if (segmentStart) {
+    best = Math.max(best, diffDaysInclusive(segmentStart, today));
   }
 
   return { current, best };
 }
 
-function escapeHtml(s="") {
+function escapeHtml(s = "") {
   return s.replace(/[&<>"']/g, (c) => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
   }[c]));
 }
 
@@ -144,35 +170,35 @@ function render() {
 
   const stageInfo = stageByStreak(current);
   document.getElementById("stageLabel").textContent = `Stage: ${stageInfo.name}`;
+
   const img = document.getElementById("stageImage");
   img.src = `./assets/stage-${stageInfo.stage}.jpg`;
-
-  // fallback if you haven’t added the later images yet
   img.onerror = () => {
-    img.onerror = null; // prevent loops
-    img.src = "./assets/stage-placeholder.jpg"; // add one placeholder image
+    img.onerror = null;
+    img.src = "./assets/stage-placeholder.jpg";
   };
 
-
-  // milestones
   const mWrap = document.getElementById("milestonesList");
   mWrap.innerHTML = "";
+
   for (const m of milestones) {
     const done = current >= m.days;
     const div = document.createElement("div");
     div.className = `mstone ${done ? "done" : ""}`;
-    div.innerHTML = `<strong>${escapeHtml(m.label)}</strong><span>${done ? "Unlocked" : `${m.days - current} days to go`}</span>`;
+    div.innerHTML = `
+      <strong>${escapeHtml(m.label)}</strong>
+      <span>${done ? "Unlocked" : `${m.days - current} days to go`}</span>
+    `;
     mWrap.appendChild(div);
   }
 
-  // feed
   const q = document.getElementById("search").value.trim().toLowerCase();
   const filter = document.getElementById("filterType").value;
 
   const feed = document.getElementById("feed");
   feed.innerHTML = "";
 
-  const filtered = sortEntriesDesc(entries).filter(e => {
+  const filtered = sortEntriesDesc(entries).filter((e) => {
     const matchesText =
       !q ||
       (e.headline || "").toLowerCase().includes(q) ||
@@ -180,7 +206,7 @@ function render() {
       (e.analysis || "").toLowerCase().includes(q) ||
       (e.action || "").toLowerCase().includes(q);
 
-    const matchesType = (filter === "all") ? true : e.dayType === filter;
+    const matchesType = filter === "all" ? true : e.dayType === filter;
     return matchesText && matchesType;
   });
 
@@ -195,6 +221,7 @@ function render() {
   for (const e of filtered) {
     const el = document.createElement("div");
     el.className = "entry";
+
     const badgeClass = e.dayType || "clean";
     const title = e.headline?.trim() || "(No headline)";
     const meta = `${e.date} • Energy ${e.energy}/10 • Mood ${e.mood}/10`;
@@ -225,20 +252,19 @@ function render() {
     feed.appendChild(el);
   }
 
-  // bind actions
-  feed.querySelectorAll("[data-del]").forEach(btn => {
+  feed.querySelectorAll("[data-del]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-del");
-      const next = entries.filter(x => x.id !== id);
+      const next = entries.filter((x) => x.id !== id);
       saveState({ entries: next });
       render();
     });
   });
 
-  feed.querySelectorAll("[data-edit]").forEach(btn => {
+  feed.querySelectorAll("[data-edit]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-edit");
-      const item = entries.find(x => x.id === id);
+      const item = entries.find((x) => x.id === id);
       if (!item) return;
 
       document.getElementById("date").value = item.date;
@@ -250,9 +276,9 @@ function render() {
       document.getElementById("analysis").value = item.analysis || "";
       document.getElementById("action").value = item.action || "";
 
-      // store "editingId" on the form dataset
       const form = document.getElementById("entryForm");
       form.dataset.editingId = id;
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
@@ -261,15 +287,18 @@ function render() {
 function upsertEntry(newEntry) {
   const state = loadState();
   const entries = state.entries || [];
-  const i = entries.findIndex(e => e.id === newEntry.id);
+  const i = entries.findIndex((e) => e.id === newEntry.id);
+
   if (i >= 0) entries[i] = newEntry;
   else entries.push(newEntry);
+
   saveState({ entries });
 }
 
 function uuid() {
-  return (crypto?.randomUUID?.() || ("id-" + Math.random().toString(16).slice(2)));
+  return crypto?.randomUUID?.() || ("id-" + Math.random().toString(16).slice(2));
 }
+
 function isEditing() {
   const form = document.getElementById("entryForm");
   return !!form?.dataset?.editingId;
@@ -279,43 +308,41 @@ function syncDateInputToToday() {
   const dateEl = document.getElementById("date");
   if (!dateEl) return;
 
-  // Don't override when editing an existing entry
   if (isEditing()) return;
 
   const today = todayISO();
-  if (dateEl.value !== today) dateEl.value = today;
+  if (dateEl.value !== today) {
+    dateEl.value = today;
+  }
 }
 
-// Schedules a one-shot timer to run shortly after the next local midnight
 function scheduleMidnightSync() {
   const now = new Date();
   const next = new Date(now);
-  next.setHours(24, 0, 2, 0); // 2 seconds after midnight to be safe
+  next.setHours(24, 0, 2, 0); // 2 seconds after local midnight
   const ms = next - now;
 
   setTimeout(() => {
     syncDateInputToToday();
-    scheduleMidnightSync(); // reschedule for the following midnight
+    render();
+    scheduleMidnightSync();
   }, ms);
 }
 
-// init
 document.addEventListener("DOMContentLoaded", () => {
-  // default date = today
   syncDateInputToToday();
 
-// Update when the user comes back to the tab
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) syncDateInputToToday();
-});
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      syncDateInputToToday();
+      render();
+    }
+  });
 
-// Update when the date input gets focus/clicked
-document.getElementById("date").addEventListener("focus", syncDateInputToToday);
-document.getElementById("date").addEventListener("click", syncDateInputToToday);
+  document.getElementById("date").addEventListener("focus", syncDateInputToToday);
+  document.getElementById("date").addEventListener("click", syncDateInputToToday);
 
-// Update after midnight automatically
-scheduleMidnightSync();
-
+  scheduleMidnightSync();
 
   document.getElementById("entryForm").addEventListener("submit", (ev) => {
     ev.preventDefault();
@@ -333,12 +360,22 @@ scheduleMidnightSync();
     const editingId = form.dataset.editingId;
     const id = editingId || uuid();
 
-    upsertEntry({ id, date, dayType, energy, mood, headline, facts, analysis, action, updatedAt: Date.now() });
+    upsertEntry({
+      id,
+      date,
+      dayType,
+      energy,
+      mood,
+      headline,
+      facts,
+      analysis,
+      action,
+      updatedAt: Date.now(),
+    });
 
-    // clear editing mode
     delete form.dataset.editingId;
 
-    // keep date at today; clear text fields
+    syncDateInputToToday();
     document.getElementById("headline").value = "";
     document.getElementById("facts").value = "";
     document.getElementById("analysis").value = "";
@@ -350,8 +387,10 @@ scheduleMidnightSync();
   document.getElementById("btnQuickNote").addEventListener("click", () => {
     const headline = prompt("Quick note headline:");
     if (!headline) return;
+
     const dateEl = document.getElementById("date");
-    const date = (isEditing() ? dateEl.value : todayISO());
+    const date = isEditing() ? dateEl.value : todayISO();
+
     upsertEntry({
       id: uuid(),
       date,
@@ -362,18 +401,20 @@ scheduleMidnightSync();
       facts: "",
       analysis: "",
       action: "",
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     });
+
     render();
   });
 
   document.getElementById("search").addEventListener("input", render);
   document.getElementById("filterType").addEventListener("change", render);
 
-  // export
   document.getElementById("btnExport").addEventListener("click", () => {
     const state = loadState();
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(state, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -382,17 +423,21 @@ scheduleMidnightSync();
     URL.revokeObjectURL(url);
   });
 
-  // import
   document.getElementById("btnImport").addEventListener("click", () => {
     document.getElementById("fileImport").click();
   });
+
   document.getElementById("fileImport").addEventListener("change", async (ev) => {
     const file = ev.target.files?.[0];
     if (!file) return;
+
     try {
       const text = await file.text();
       const parsed = JSON.parse(text);
-      if (!parsed.entries || !Array.isArray(parsed.entries)) throw new Error("Invalid file format");
+      if (!parsed.entries || !Array.isArray(parsed.entries)) {
+        throw new Error("Invalid file format");
+      }
+
       saveState({ entries: parsed.entries });
       render();
       ev.target.value = "";
@@ -401,18 +446,13 @@ scheduleMidnightSync();
     }
   });
 
-  // reset
   document.getElementById("btnReset").addEventListener("click", () => {
     const ok = confirm("Reset all local data? This cannot be undone.");
     if (!ok) return;
+
     localStorage.removeItem(STORAGE_KEY);
     render();
   });
 
   render();
 });
-
-
-
-
-
