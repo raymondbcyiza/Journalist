@@ -268,18 +268,22 @@
     background: rgba(255, 255, 255, 0.05);
   }
   
-  .progressHero {
+  .progressHero, 
+  .stageTile__imageWrap {
     margin-bottom: 18px;
     overflow: hidden;
     border-radius: 18px;
     border: 1px solid var(--line);
     background: var(--bg-elev);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .progressHero img {
     width: 100%;
     aspect-ratio: 16 / 10;
-    object-fit: cover;
+    object-fit: contain;
   }
   
   .stats {
