@@ -438,18 +438,7 @@ window.addEventListener("error", (e) => {
     }
   }
   
-  function scheduleMidnightSync() {
-    const now = new Date();
-    const next = new Date(now);
-    next.setHours(24, 0, 2, 0);
-    const ms = next - now;
   
-    setTimeout(() => {
-      syncDateInputToToday();
-      render();
-      scheduleMidnightSync();
-    }, ms);
-  }
   
   document.addEventListener("DOMContentLoaded", () => {
     syncDateInputToToday();
@@ -463,17 +452,14 @@ window.addEventListener("error", (e) => {
     });
   
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) {
-        syncDateInputToToday();
-        render();
-        updateNextDayTimer();
-      }
-    });
+        if (!document.hidden) {
+          updateNextDayTimer();
+        }
+      });
   
     document.getElementById("date").addEventListener("focus", syncDateInputToToday);
     document.getElementById("date").addEventListener("click", syncDateInputToToday);
   
-    scheduleMidnightSync();
   
     document.getElementById("entryForm").addEventListener("submit", (ev) => {
       ev.preventDefault();
