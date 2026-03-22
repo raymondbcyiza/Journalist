@@ -24,11 +24,11 @@ window.addEventListener("error", (e) => {
   ];
   
   const galleryStages = [
-    { days: 3, label: "Momentum", file: "stage-3.jpg" },
-    { days: 7, label: "First Week", file: "stage-7.jpg" },
-    { days: 14, label: "Building", file: "stage-14.jpg" },
-    { days: 30, label: "Steady", file: "stage-30.jpg" },
-    { days: 60, label: "Focused", file: "stage-60.jpg" },
+    { days: 3, label: "Momentum", file: "stage-1.jpg" },
+    { days: 7, label: "First Week", file: "stage-2.jpg" },
+    { days: 14, label: "Building", file: "stage-3.jpg" },
+    { days: 30, label: "Steady", file: "stage-4.jpg" },
+    { days: 60, label: "Focused", file: "stage-5.jpg" },
     { days: 90, label: "Major Milestone", file: "stage-90.jpg" },
     { days: 120, label: "Discipline", file: "stage-120.jpg" },
     { days: 150, label: "Warrior", file: "stage-150.jpg" },
@@ -53,10 +53,10 @@ window.addEventListener("error", (e) => {
     if (days >= 120) return { stage: 120, name: "Discipline (120+)" };
     if (days >= 90) return { stage: 90, name: "Major Milestone (90+)" };
     if (days >= 60) return { stage: 60, name: "Focused (60+)" };
-    if (days >= 30) return { stage: 30, name: "Steady (30+)" };
-    if (days >= 14) return { stage: 14, name: "Building (14+)" };
-    if (days >= 7) return { stage: 7, name: "First Week (7+)" };
-    if (days >= 3) return { stage: 3, name: "Momentum (3+)" };
+    if (days >= 30) return { stage: 5, name: "Steady (30+)" };
+    if (days >= 14) return { stage: 4, name: "Building (14+)" };
+    if (days >= 7) return { stage: 3, name: "First Week (7+)" };
+    if (days >= 3) return { stage: 2, name: "Momentum (3+)" };
     return { stage: 1, name: "Starting (0+)" };
   };
   
