@@ -441,6 +441,18 @@ window.addEventListener("error", (e) => {
   
   
   document.addEventListener("DOMContentLoaded", () => {
+    const heroImg = document.getElementById("stageImage");
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("imageModalImg");
+
+    heroImg.addEventListener("click", () => {
+        modalImg.src = heroImg.src;
+        modal.classList.remove("hidden");
+    });
+
+    modal.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    });
     syncDateInputToToday();
     setActiveTab("overview");
     startNextDayTimer();
