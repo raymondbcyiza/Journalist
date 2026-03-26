@@ -53,11 +53,11 @@ function stageByStreak(days) {
   if (days >= 150) return { stage: 150, name: "Warrior (150+)" };
   if (days >= 120) return { stage: 120, name: "Discipline (120+)" };
   if (days >= 90) return { stage: 90, name: "Major Milestone (90+)" };
-  if (days >= 60) return { stage: 60, name: "Focused (60+)" };
-  if (days >= 30) return { stage: 5, name: "Steady (30+)" };
-  if (days >= 14) return { stage: 4, name: "Building (14+)" };
-  if (days >= 7) return { stage: 3, name: "First Week (7+)" };
-  if (days >= 3) return { stage: 2, name: "Momentum (3+)" };
+  if (days >= 60) return { stage: 5, name: "Focused (60+)" };
+  if (days >= 30) return { stage: 4, name: "Steady (30+)" };
+  if (days >= 14) return { stage: 3, name: "Building (14+)" };
+  if (days >= 7) return { stage: 2, name: "First Week (7+)" };
+  if (days >= 3) return { stage: 1, name: "Momentum (3+)" };
   return { stage: 1, name: "Starting (0+)" };
 }
 
