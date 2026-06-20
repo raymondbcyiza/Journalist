@@ -26,10 +26,10 @@ const milestones = [
 
 const galleryStages = [
   { days: 3, label: "Momentum", file: "stage-1.jpg" },
-  { days: 7, label: "First Week", file: "stage-2.jpg" },
-  { days: 14, label: "Building", file: "stage-3.jpg" },
-  { days: 30, label: "Steady", file: "stage-4.jpg" },
-  { days: 60, label: "Focused", file: "stage-5.jpg" },
+  { days: 7, label: "First Week", file: "stage-1.jpg" },
+  { days: 14, label: "Building", file: "stage-2.jpg" },
+  { days: 30, label: "Steady", file: "stage-3.jpg" },
+  { days: 60, label: "Focused", file: "stage-4.jpg" },
   { days: 90, label: "Major Milestone", file: "stage-90.jpg" },
   { days: 120, label: "Discipline", file: "stage-120.jpg" },
   { days: 150, label: "Warrior", file: "stage-150.jpg" },
